@@ -47,9 +47,9 @@ public class SecurityConfig {
             // 권한이 없을 때도 들어갈 수 있는 경로들에 대한 접근 권한 설정
             auth.requestMatchers("/user/signup", "/user/check-duplicate", "/auth/login", "/auth/fail", "/", "/main").permitAll();
             // 관리자일 때만 들어갈 수 있는 권한 설정
-            auth.requestMatchers("/admin/*").hasAnyAuthority(UserRole.ADMIN.getRole());
+            auth.requestMatchers("/admin/*").hasRole("ADMIN");
             // 유저일 때만 들어갈 수 있는 권한 설정
-            auth.requestMatchers("/user/page").hasAnyAuthority(UserRole.USER.getRole());
+            auth.requestMatchers("/user/page").hasRole("USER");
             auth.anyRequest().authenticated();
 
             // 로그인 시 설정

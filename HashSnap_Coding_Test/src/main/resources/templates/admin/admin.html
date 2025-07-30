@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>회원 페이지</title>
@@ -18,21 +18,19 @@
 
         h1 {
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        form {
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        .button-group {
+            display: flex;
+            gap: 20px;
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 12px 24px;
+            font-size: 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
@@ -46,8 +44,14 @@
 </head>
 <body>
     <h1>관리자 페이지입니다.</h1>
-    <form th:action="@{/auth/logout}" th:method="post">
-        <button>로그아웃</button>
-    </form>
+    <h2>안녕하세요, <span th:text="${session.loginUser.userName}">사용자</span>님! 반갑습니다.</h2>
+    <br/>
+    <br/>
+    <div class="button-group">
+        <button onclick="location.href='/user/my-page'">나의 정보 확인</button>
+        <form th:action="@{/auth/logout}" th:method="post">
+            <button>로그아웃</button>
+        </form>
+    </div>
 </body>
 </html>

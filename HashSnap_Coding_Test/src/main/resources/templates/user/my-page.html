@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>마이페이지 | HashSnap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 40px;
+    }
+
+    .info-box {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 320px;
+    }
+
+    .info-item {
+      margin-bottom: 15px;
+      font-size: 16px;
+      color: #444;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>마이 페이지</h1>
+
+  <div class="info-box">
+    <div class="info-item"><span class="label">이름:</span> <span th:text="${session.loginUser.userName}">홍길동</span></div>
+    <div class="info-item"><span class="label">닉네임:</span> <span th:text="${session.loginUser.nickname}">길동이</span></div>
+    <div class="info-item"><span class="label">전화번호:</span> <span th:text="${session.loginUser.userPhone}">010-1234-5678</span></div>
+    <div class="info-item"><span class="label">이메일:</span> <span th:text="${session.loginUser.userEmail}">gildong@example.com</span></div>
+
+    <div class="button-group">
+      <form th:action="@{/auth/logout}" th:method="post">
+        <button>로그아웃</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .form-group label {
+            width: 90px;
+            font-size: 14px;
+            color: #555;
+            text-align: right;
+        }
+
+        .form-group input {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .required {
+            color: #8B0000;
+        }
+    </style>
+</head>
+<body>
+<h1>회원가입 페이지</h1>
+<form th:action="@{/user/signup}" method="post">
+    <div class="form-group">
+        <label for="userName"> <span class="required">*</span> 이름 : </label>
+        <input type="text" id="userName" name="userName" placeholder="이름을 입력하세요.">
+    </div>
+
+    <div class="form-group">
+        <label for="nickname"> <span class="required">*</span> 닉네임 : </label>
+        <input type="text" id="nickname" name="nickname" placeholder="사용자이름을 입력하세요.">
+        <button id="checkDuplicate" onclick="checkDuplicate()">중복 확인</button>
+        <div id="duplicateResult"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="password"> <span class="required">*</span> 비밀번호 : </label>
+        <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요.">
+    </div>
+
+    <div class="form-group">
+        <label for="userPhone"> <span class="required">*</span> 전화번호 : </label>
+        <input type="text" id="userPhone" name="userPhone" placeholder="'-' 제외하고 기입해주세요.">
+        <div id="userPhoneResult"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="userEmail">이메일 : </label>
+        <input type="text" id="userEmail" placeholder="이메일 주소를 입력하세요." name="userEmail">
+        <div id="userEmailResult"></div>
+    </div>
+
+    <div class="button-group">
+        <button type="button" onclick="location.href='/main'">메인으로</button>
+        <button id="submitBtn" type="submit">회원가입</button>
+    </div>
+
+    <script>
+        const checkDuplicateButton = document.getElementById("checkDuplicate");
+        const nickname = document.getElementById("nickname");
+        const nicknameRegex = /^[a-zA-Z]{4,}$/;  // 닉네임 유효성 검사, 영문자 최소 4글자 이상
+        const submitBtn = document.getElementById("submitBtn");
+        const userName = document.getElementById("userName");
+        const userPhone = document.getElementById("userPhone");
+        const userPhoneRegex = /^\d{10,11}$/   // 전화번호 유효성 검사, 하이플 없이 숫자만
+        const password = document.getElementById("password");
+        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\[\]{}|\\:;"'<>,.?/~`-]).{8,}$/  // 비밀번호 유효성 검사, 영문자(대소구분없이), 숫자, 특수기호 최소 1개 포함 & 8자 이상
+        const userEmail = document.getElementById("userEmail");
+        // 이메일 유효성 검사, 기본 이메일 구조 확인(- 특수기호 포함, 도메인 끝 2자 이상 .com, .kr, .net 등 지원)
+        const userEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        const duplicateResult = document.getElementById("duplicateResult");
+        const signupForm = document.querySelector("form");
+
+
+        checkDuplicateButton.addEventListener("click", async (event) => {
+            event.preventDefault();
+            if(!nicknameRegex.test(nickname.value)) {
+                duplicateResult.textContent = "닉네임은 영문자로 4글자 이상 입력해주세요.";
+                duplicateResult.style.color = 'red';
+                return;
+            }
+            try{
+                const response = await fetch('/user/check-duplicate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nickname: nickname.value })
+                })
+                const data = await response.json();
+
+                if (data.isDuplicate) {
+                    duplicateResult.textContent = '이미 사용 중인 아이디입니다.';
+                    duplicateResult.style.color = 'red';
+                } else {
+                    duplicateResult.textContent = '사용 가능한 아이디입니다.';
+                    duplicateResult.style.color = 'green';
+                }
+            } catch (error){
+                console.error('Error :' + error );
+                duplicateResult.textContent = '중복 확인 중 오류가 발생했습니다.';
+                duplicateResult.style.color = '#000000';
+            }
+        });
+
+        // 실시간 이메일 중복 확인 (이메일이 있을 때만)
+        userEmail.addEventListener("blur", async () => {
+            if (userEmail.value.trim() !== "") {
+                if(userEmailRegex.test(userEmail.value)){
+                    const resultDiv = document.getElementById("userEmailResult");
+                    await checkOne("userEmail", userEmail.value, resultDiv);
+                } else {
+                    const resultDiv = document.getElementById("userEmailResult");
+                    resultDiv.textContent = "이메일 형식이 올바르지 않습니다. 다시 확인해주세요.";
+                    resultDiv.style.color = 'red';
+                }
+            }
+        });
+
+        // 실시간 전화번호 중복 확인
+        userPhone.addEventListener("blur", async () => {
+            if(userPhoneRegex.test(userPhone.value)){
+                const resultDiv = document.getElementById("userPhoneResult");
+                await checkOne("userPhone", userPhone.value, resultDiv);
+            } else {
+                const resultDiv = document.getElementById("userPhoneResult");
+                resultDiv.textContent = "하이픈(-) 제외하고 작성해주세요.";
+                resultDiv.style.color = 'red';
+            }
+        });
+
+        /* 중복 체크 함수 */
+        async function checkOne(type, value, resultDiv){
+            try{
+                const body = {};
+                body[type] = value;
+
+                const response = await fetch("/user/check-duplicate", {
+                    method : "POST",
+                    headers : {
+                        "Content-Type" : "application/json"
+                    },
+                    body : JSON.stringify(body)
+                });
+                const data = await response.json();
+                resultDiv.textContent = data.isDuplicate ? '이미 사용 중입니다.' : '사용 가능합니다.';
+                resultDiv.style.color = data.isDuplicate ? "red" : "green"
+            } catch (error) {
+                console.error('Error :' + error);
+                resultDiv.textContent = '중복 확인 중 오류가 발생했습니다.';
+                resultDiv.style.color = '#000000';
+            }
+        }
+
+        submitBtn.addEventListener("click", async (event) => {
+            event.preventDefault();
+            if(userName.value.trim() === ""){
+                alert("이름을 입력해주세요.");
+                return;
+            }
+            if (nickname.value.trim() === ""){
+                alert("닉네임을 입력해주세요.");
+                return
+            }
+            if(!nicknameRegex.test(nickname.value)){
+                alert("닉네임은 영문자로 4글자 이상 입력해주세요.")
+                return;
+            }
+            if (password.value.trim() === ""){
+                alert("비밀번호를 입력해주세요.");
+                return;
+            }
+
+            if(!passwordRegex.test(password.value)){
+                alert("비밀번호는 영문자(대소문자 구분X), 숫자, 특수기호 모두 포함하여 최소 8자 이상이어야합니다.")
+                return;
+            }
+
+            if (userPhone.value.trim() === ""){
+                alert("전화번호를 입력해주세요.");
+                return;
+            }
+
+            if(!userPhoneRegex.test(userPhone.value)){
+                alert("하이픈(-) 제외하고 작성해주세요.")
+                return;
+            }
+
+            const checks = [
+                { type: "nickname", value: nickname.value },
+                { type: "userPhone", value: userPhone.value }
+            ];
+            if (userEmail.value.trim() !== "") {
+                if(!userEmailRegex.test(userEmail.value)){
+                    alert("이메일 형식이 올바르지 않습니다. 다시 확인해주세요.")
+                    return;
+                }
+                checks.push({ type: "userEmail", value: userEmail.value });
+            }
+
+            try {
+                for (const item of checks) {
+                    const body = {};
+                    body[item.type] = item.value;
+
+                    const res = await fetch("/user/check-duplicate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body)
+                    });
+
+                    const msg = await res.json();
+                    if (msg.isDuplicate) {
+                        alert(`${item.type} 중복 오류: 이미 사용 중입니다.`);
+                        return;
+                    }
+                }
+                // 최종 제출
+                signupForm.submit();
+            }catch(error){
+                alert ("제출 중 오류가 발생했습니다.");
+                console.error("제출 오류 : " + error);
+            }
+        });
+    </script>
+</form>
+</body>
+</html>

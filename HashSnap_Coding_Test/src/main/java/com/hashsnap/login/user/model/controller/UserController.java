@@ -1,9 +1,13 @@
 package com.hashsnap.login.user.model.controller;
 
+import com.hashsnap.login.user.model.dto.EmailVerificationResult;
 import com.hashsnap.login.user.model.dto.SignupDTO;
+import com.hashsnap.login.user.model.dto.SingleResponseDTO;
 import com.hashsnap.login.user.model.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -77,5 +81,29 @@ public class UserController {
     @GetMapping("/my-page")
     public String myPage(){
         return "user/my-page";
+    }
+
+    @GetMapping("/reset-password")
+    public String resetPwdPage(){
+        return "user/reset-password";
+    }
+
+    // sendMessage(): 이메일 전송 API.
+    // 이메일을 파라미터로 받아 해당 UserService.sendCodeToEmail() 메서드로 넘겨준다.
+    @PostMapping("/email/vefirication-requests")
+    public ResponseEntity<?> snedMessage(@RequestParam("email") String email){
+        userService.sendCodeToEmail(email);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // verificationEmail(): 이메일 인증을 진행하는 API.
+    // 이메일과 사용자가 작성한 인증 코드를 파라미터로 받아 UserService.verifiedCode() 메서드로 넘긴다.
+    // 인증에 성공하면 ture를 실패하면 false를 반환한다.
+    @GetMapping("/email/verification")
+    public ResponseEntity<?> verificationEmail(@RequestParam("email") String email, @RequestParam("code") String authCode){
+        EmailVerificationResult response = userService.verifiedCode(email, authCode);
+
+        return new ResponseEntity<>(new SingleResponseDTO<>(response), HttpStatus.OK);
     }
 }

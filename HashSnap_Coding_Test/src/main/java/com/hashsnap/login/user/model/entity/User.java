@@ -2,10 +2,7 @@ package com.hashsnap.login.user.model.entity;
 
 import com.hashsnap.login.common.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "tbl_user")
@@ -23,10 +20,12 @@ public class User {
     private String password;
     private String userPhone;
     private String userEmail;
+
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    public void modifyPassword(String password){
-        this.password = password;
+    // 비밀번호 수정 메소드 (암호화는 서비스에서 처리)
+    public void modifyPassword(String encryptedPassword) {
+        this.password = encryptedPassword;
     }
 }

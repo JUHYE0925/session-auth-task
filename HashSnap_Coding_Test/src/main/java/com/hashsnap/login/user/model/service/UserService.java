@@ -84,7 +84,7 @@ public class UserService {
     }
 
     public void sendCodeToEmail(String email) {
-        this.checkDuplicatedEmail(email);
+        this.checkExistingEmail(email);
         String title = "HashSnap 이메일 인증 번호";
         String authCode = this.createCode();
         mailService.sendEmail(email, title, authCode);
@@ -93,12 +93,12 @@ public class UserService {
         redisService.setValues(AUTH_CODE_PREFIX + email, authCode, Duration.ofMillis(this.authCodeExpirationMillis));
     }
 
-    private void checkDuplicatedEmail(String email){
+    private void checkExistingEmail(String email) {
         User user = userRepository.findUserEmail(email);
 
-        if(user != null){
-            log.debug("MemberServiceImpl.checkDuplicatedEmail exception occur email : {} ", email);
-            throw new RuntimeException("이미 존재하는 이메일");
+        if(user == null){
+            log.debug("MemberServiceImpl.checkExistingEmail exception occur email : {} ", email);
+            throw new RuntimeException("존재하지 않는 이메일입니다");
         }
     }
 
@@ -119,10 +119,26 @@ public class UserService {
     }
 
     public EmailVerificationResult verifiedCode(String email, String authCode){
-        this.checkDuplicatedEmail(email);
+        this.checkExistingEmail(email);
         String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
         boolean authResult = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
 
         return EmailVerificationResult.of(authResult);
+    }
+
+    public void updateNewPassword(String newPassword, String email) {
+        User user = userRepository.findUserEmail(email);
+        System.out.println("🐑🐑🐑" + user);
+
+        // 비밀번호 암호화
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        System.out.println("😈😈😈" + newPassword + " / " + email);
+
+        // 암호화된 비밀번호를 엔티티에 저장
+        user.modifyPassword(encryptedPassword);
+
+
+        // 사용자 정보 업데이트
+        userRepository.save(user);
     }
 }

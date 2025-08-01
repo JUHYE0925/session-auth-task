@@ -23,6 +23,7 @@ public class MailService {
         SimpleMailMessage emailform = createEmailForm(toEmail, title, text);
         try{
             mailSender.send(emailform);
+            log.info("이메일 발송 완료 : {} ", toEmail);
         } catch(RuntimeException e){
             log.debug("MailService.sendEmail exception occur toEmail : {}, " +
                     "title: {}, text: {}", toEmail, title, text);

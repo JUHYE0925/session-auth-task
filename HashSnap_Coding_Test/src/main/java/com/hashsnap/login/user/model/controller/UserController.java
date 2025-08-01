@@ -10,7 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,10 +91,40 @@ public class UserController {
         return "user/reset-password";
     }
 
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam("newPassword") String newPassword,
+                                @RequestParam("confirmPassword") String confirmPassword,
+                                @RequestParam("email") String email,
+                                RedirectAttributes redirectAttributes) {
+
+        System.out.println("🔒🔒🔒" + newPassword + " / " + confirmPassword + " / " + email);
+
+        String message = "";
+
+        if (newPassword.equals(confirmPassword)) {
+            try {
+                userService.updateNewPassword(newPassword, email);
+                message = "비밀번호 재설정 완료";
+                redirectAttributes.addFlashAttribute("message", message);
+                return "redirect:/auth/success";
+            } catch (Exception e) {
+                message = "비밀번호 재설정 중 오류 발생";
+                redirectAttributes.addFlashAttribute("message", message);
+                return "redirect:/user/reset-password";
+            }
+        } else {
+            message = "입력하신 비밀번호와 비밀번호 확인란의 값이 다릅니다.";
+            redirectAttributes.addFlashAttribute("message", message);
+            return "redirect:/user/reset-password";
+        }
+    }
+
     // sendMessage(): 이메일 전송 API.
     // 이메일을 파라미터로 받아 해당 UserService.sendCodeToEmail() 메서드로 넘겨준다.
-    @PostMapping("/email/vefirication-requests")
-    public ResponseEntity<?> snedMessage(@RequestParam("email") String email){
+    @PostMapping("/email/verification-requests")
+    public ResponseEntity<?> sendMessage(@RequestParam("email") String email){
+
+        System.out.println("😄😄😄 sendMessage 옴");
         userService.sendCodeToEmail(email);
 
         return new ResponseEntity<>(HttpStatus.OK);

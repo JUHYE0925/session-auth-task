@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByNickname(@Param("nickname") String nickname);
 
     @Query("""
-        SELECT u FROM User u WHERE u.nickname = :userEmail
+        SELECT u FROM User u WHERE u.userEmail = :userEmail
     """)
     User findUserEmail(@Param("userEmail") String userEmail);
 }

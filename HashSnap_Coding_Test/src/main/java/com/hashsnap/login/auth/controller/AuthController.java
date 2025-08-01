@@ -1,7 +1,10 @@
 package com.hashsnap.login.auth.controller;
 
 import com.hashsnap.login.auth.model.service.AuthService;
+import com.hashsnap.login.user.model.repository.UserRepository;
+import com.hashsnap.login.user.model.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -9,11 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/auth")
 public class AuthController {
-    private final AuthService authService;
 
-    public AuthController(AuthService authService){
-        this.authService = authService;
-    }
+    public AuthController(){}
 
     @GetMapping("/login")
     public String loginPage() {

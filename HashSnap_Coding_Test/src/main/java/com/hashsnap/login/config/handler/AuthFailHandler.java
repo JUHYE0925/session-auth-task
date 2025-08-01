@@ -3,6 +3,7 @@ package com.hashsnap.login.config.handler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,12 +19,6 @@ import java.net.URLEncoder;
 /* 사용자가 로그인  실패 시 실패 요청을 커스텀하기 위한 핸들러 */
 @Configuration
 public class AuthFailHandler extends SimpleUrlAuthenticationFailureHandler {
-
-//    private final View error;
-//
-//    public AuthFailHandler(View error){
-//        this.error = error;
-//    }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException{

@@ -1,6 +1,5 @@
 package com.hashsnap.login.config;
 
-import com.hashsnap.login.common.UserRole;
 import com.hashsnap.login.config.handler.AuthFailHandler;
 import com.hashsnap.login.config.handler.CustumLoginSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +55,7 @@ public class SecurityConfig {
         }).formLogin(login -> {
             // 로그인 페이지를 찾아주는 메소드
             login.loginPage("/auth/login");
+            login.loginProcessingUrl("/auth/login");
             // 사용자 id 입력 필드와 사용자 Pass 입력 필드가 일치해야 들어갈 수 있다.
             login.usernameParameter("userPhone");
             login.passwordParameter("password");
@@ -84,4 +84,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }

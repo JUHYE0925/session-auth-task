@@ -5,7 +5,6 @@ import com.hashsnap.login.user.model.dto.LoginUserDTO;
 import com.hashsnap.login.user.model.entity.User;
 import com.hashsnap.login.user.model.repository.UserRepository;
 import com.hashsnap.login.user.model.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

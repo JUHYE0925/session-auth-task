@@ -28,7 +28,7 @@ git clone https://github.com/JUHYE0925/session-auth-task.git
 ```bash
 cd backend
 ./gradlew build
-java -jar build/libs/HashSnap_Coding_Test.jar
+java -jar build/libs/HashSnap_Coding_Test-0.0.1-SNAPSHOT.jar
 ```
 
 ### 4. 데이터베이스 설정
